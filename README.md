@@ -12,13 +12,13 @@ Sometimes, all that you need is CloudFormation, but the official AWS command-lin
 
     ./button.py create staging
 
-Button requires Python and the official AWS CLI utility.
+Button requires Python 2 or above, and the official AWS command-line utility.
 
 For more details, use the *help* option:
 
     ./button.py help
 
-## Expected format of CloudFormation templates
+## Expectations
 
 This tool is very opinionated, and assumes that:
 
