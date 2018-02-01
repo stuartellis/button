@@ -8,15 +8,17 @@ Sometimes, all that you need is CloudFormation, but the official AWS command-lin
 
 1) Copy the file *button.py* into your project
 2) Create a directory for the AWS CloudFormation template file that has the same name as the environment, such as *staging*
-3) Run *button.py*:
+3) Run *button.py*
+
+For example, to create the CloudFormation stack for the staging environment:
 
     ./button.py create staging
-
-Button requires Python 2 or above, and the official AWS command-line utility.
 
 For more details, use the *help* option:
 
     ./button.py help
+
+Button requires Python 2 or above, and the official AWS command-line utility.
 
 ## Expectations
 
