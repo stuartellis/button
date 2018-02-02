@@ -14,6 +14,8 @@ For example, to create the CloudFormation stack for the staging environment:
 
     ./button.py create staging
 
+Button always validates the CloudFormation template before it runs any other command. It uses the online validation service that is provided by AWS.
+
 For more details, use the *help* option:
 
     ./button.py help
