@@ -8,9 +8,9 @@ Get the latest version from: https://www.github.com/stuartellis/button
 
 This tool assumes that:
 
-* You have a CloudFormation template file
-* Template tags are in a separate JSON file
-* Template parameters are in a separate JSON file
+* You already have a CloudFormation template file
+* The tags for the template are in a separate JSON file
+* The parameters for the template are in a separate JSON file
 * All of these files are in the same directory
 
 It expects that your CloudFormation template file has the name *template.yaml*, 
@@ -20,9 +20,10 @@ You can specify other names as options if you need to.
 
 To automatically decide the name of the CloudFormation stack, 
 it looks for tags called 'Project' and 'Environment'.
-The AWS CloudFormation stack is then assumed to have the name *project-environment*, 
+The AWS CloudFormation stack is assumed to have the name *project-environment*, 
 which match the 'Project' and 'Environment' tags.
-If this is not what you want, use the *-s* option to specify the name of the stack.
+If this is not what you want, 
+use the *-s* option to specify the name of the stack.
 
 The MIT License (MIT)
 

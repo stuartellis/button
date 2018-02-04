@@ -26,9 +26,12 @@ Button requires Python 2 or above, and the official AWS command-line utility.
 
 This tool is very opinionated, and assumes that:
 
-* The AWS CloudFormation stack should have the name *project-environment*
-* Your CloudFormation template is in a directory that has the same name as the environment name
-* Your CloudFormation template is in YAML format
-* Your CloudFormation template file has the name *template.yaml*
-* Template parameters are in a file called *parameters.json*, in the same directory as the template file
-* Template tags are in a file called *tags.json*, in the same directory as the template file
+* You already have a CloudFormation template file
+* The tags for the template are in a separate JSON file
+* The parameters for the template are in a separate JSON file
+* All of these files are in the same directory
+
+It expects that your CloudFormation template file has the name *template.yaml*, 
+that the parameters files is called *parameters.json*, and that the tags file is called *tags.json*. You can specify other names as options if you need to.
+
+To automatically decide the name of the CloudFormation stack, it looks for tags called 'Project' and 'Environment'. The AWS CloudFormation stack is assumed to have the name *project-environment*, which match the 'Project' and 'Environment' tags. If this is not what you want, use the *-s* option to specify the name of the stack.
