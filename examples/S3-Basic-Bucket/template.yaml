@@ -1,0 +1,25 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 data storage
+
+Parameters:
+
+  # Name of S3 Bucket
+  # All S3 bucket names must be unique,
+  # and between 3 and 63 characters long
+  BucketName:
+    Description: S3 bucket name
+    Type: 'String'
+    MinLength: '3'
+    MaxLength: '63'
+    AllowedPattern: '[-a-zA-Z0-9]*'
+
+Resources:
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName 
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Suspended

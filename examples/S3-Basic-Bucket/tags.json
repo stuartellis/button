@@ -1,0 +1,18 @@
+[
+  {
+    "Key": "Environment",
+    "Value": "Staging"
+  },
+  {
+    "Key": "ManagedBy",
+    "Value": "AmazonNative"
+  },
+  {
+    "Key": "Project",
+    "Value": "test1"
+  },
+  {
+    "Key": "Tier",
+    "Value": "Storage"
+  }
+]

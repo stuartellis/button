@@ -1,0 +1,6 @@
+[
+    {
+      "ParameterKey": "BucketName",
+      "ParameterValue": "test1-backups-eu-west-1"
+    }
+]
