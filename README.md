@@ -1,8 +1,6 @@
 # Button
 
-Sometimes, all that you need is CloudFormation, but the official AWS command-line tool is surprisingly awkward to use.
-
-Drop *button.py* into any project that has CloudFormation templates to make life better.
+Just drop *button.py* into any project that has CloudFormation templates to manage your application environments without a stand-alone DevOps tool or the awkwardness of interacting with the AWS command-line utility.
 
 ## Usage
 
@@ -10,17 +8,19 @@ Drop *button.py* into any project that has CloudFormation templates to make life
 2) Put the AWS CloudFormation files in a directory with a sensible name, such as *./aws/staging*
 3) Run *button.py*
 
-For example, to create the CloudFormation stack from the files in the directory *./aws/staging*, run this command:
+For example, to create the CloudFormation stack from the files in the directory *aws/staging*, run this command:
 
-    ./button.py create ./aws/staging
+    ./button.py create aws/staging
 
-Button always validates the CloudFormation template before it runs any other command. It uses the online validation service that is provided by AWS.
+Button also knows how to *update* and *delete* stacks.
+
+Button always validates the CloudFormation template before it runs any other command. It uses the online validation service that is provided by AWS. Use the *validate* command to check a template without actually running it. 
 
 For more details, use the *--help* option:
 
     ./button.py --help
 
-Button requires Python 2 or above, and [the official AWS command-line utility](https://aws.amazon.com/cli/).
+Button requires your computer to have Python 2 or above, and [the official AWS command-line utility](https://aws.amazon.com/cli/).
 
 ## Expectations
 
