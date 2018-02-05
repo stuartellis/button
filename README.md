@@ -20,7 +20,7 @@ For more details, use the *--help* option:
 
     ./button.py --help
 
-Button requires Python 2, and [the official AWS command-line utility](https://aws.amazon.com/cli/).
+Button requires Python 2 or above, and [the official AWS command-line utility](https://aws.amazon.com/cli/).
 
 ## Expectations
 
