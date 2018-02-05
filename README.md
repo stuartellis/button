@@ -1,6 +1,6 @@
 # Button
 
-Sometimes, all that you need is CloudFormation, but the official AWS command-line tool is surprisingly awkward to use. 
+Sometimes, all that you need is CloudFormation, but the official AWS command-line tool is surprisingly awkward to use.
 
 Drop *button.py* into any project that has CloudFormation templates to make life better.
 
@@ -20,7 +20,7 @@ For more details, use the *--help* option:
 
     ./button.py --help
 
-Button requires Python 3, and the official AWS command-line utility.
+Button requires Python 2, and [the official AWS command-line utility](https://aws.amazon.com/cli/).
 
 ## Expectations
 
