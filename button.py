@@ -91,6 +91,10 @@ def main():
         help='the name of the CloudFormation template file. Default: template.yaml',
         action='store_true', default='template.yaml')
     parser.add_argument(
+        '-v', '--verbose',
+        help='output the generated commands',
+        action='store_true')
+    parser.add_argument(
         '-z', '--tags',
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
     args = vars(parser.parse_args())
@@ -127,7 +131,6 @@ def build_cf_cmd(subcommand, stack_name,
         if iam is True:
             cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
 
-    print(' '.join(cmd_with_options))
     return ' '.join(cmd_with_options)
 
 
@@ -176,6 +179,11 @@ def build_config(args):
     else:
         config["iam"] = False
 
+    if args['verbose']:
+        config['verbose'] = True
+    else:
+        config["verbose"] = False
+
     return config
 
 
@@ -203,6 +211,10 @@ def run(config):
                                config['parameters'],
                                config['tags'],
                                config['iam'])
+
+        if config["verbose"]:
+            print(command)
+
         result = subprocess.call(command, shell=True)
         if result != 0:
             raise Exception(result)
