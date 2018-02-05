@@ -1,8 +1,8 @@
 # Button
 
-A one file AWS DevOps tool.
+Sometimes, all that you need is CloudFormation, but the official AWS command-line tool is surprisingly awkward to use. 
 
-Sometimes, all that you need is CloudFormation, but the official AWS command-line tool is surprisingly awkward to use. Drop *button.py* into any project that has CloudFormation templates to make life better.
+Drop *button.py* into any project that has CloudFormation templates to make life better.
 
 ## Usage
 
