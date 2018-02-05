@@ -16,9 +16,9 @@ For example, to create the CloudFormation stack from the files in the directory 
 
 Button always validates the CloudFormation template before it runs any other command. It uses the online validation service that is provided by AWS.
 
-For more details, use the *help* option:
+For more details, use the *--help* option:
 
-    ./button.py help
+    ./button.py --help
 
 Button requires Python 2 or above, and the official AWS command-line utility.
 
