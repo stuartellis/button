@@ -103,8 +103,9 @@ def main():
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
     args = vars(parser.parse_args())
     try:
-        config = build_config(args, CF_CMD_MAPPINGS)
-        run(config)
+        config = build_config(args)
+        cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
+        run(cmd_list, config)
     except Exception as e:
         print('Error: {0}'.format(e))
         exit(1)
@@ -113,23 +114,21 @@ def main():
 def build_cf_cmd(subcommand, config):
     ''' Builds an AWS CLI command for CloudFormation as a string '''
 
-    cf_subcommand = config['mappings'][subcommand]
-    command = 'aws cloudformation {0}'.format(cf_subcommand)
-    cmd_with_options = [command]
+    cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
 
     if config['format'] == 'text':
         cmd_with_options.append('--output text')
 
-    if subcommand != 'validate':
+    if subcommand != 'validate-template':
         cmd_with_options.append(
             '--stack-name {0}'.format(config['stack_name']))
 
-    if subcommand != 'delete':
+    if subcommand != 'delete-stack':
         if config['template'] is not None:
             cmd_with_options.append(
                 '--template-body {0}'.format(config['template']))
 
-    if subcommand == 'create' or subcommand == 'update':
+    if subcommand == 'create-stack' or subcommand == 'update-stack':
         if config['parameters'] is not None:
             cmd_with_options.append(
                 '--parameters {0}'.format(config['parameters']))
@@ -141,16 +140,20 @@ def build_cf_cmd(subcommand, config):
     return ' '.join(cmd_with_options)
 
 
-def build_config(args, mappings):
-    ''' Creates a configuration from the command-line arguments '''
-
-    config = { 'mappings': mappings }
-    if args['subcommand'] in config['mappings']:
-        config['subcommands'] = ['validate']
-        if args['subcommand'] != 'validate':
-            config['subcommands'].append(args['subcommand'])
+def build_cmd_list(subcommand, mappings):
+    if subcommand in mappings:
+        cmd_list = [ mappings['validate'] ]
+        if subcommand != 'validate':
+            cmd_list.append(mappings['subcommand'])
+        return cmd_list
     else:
         raise KeyError('Invalid subcommand')
+
+
+def build_config(args):
+    ''' Creates a configuration from the command-line arguments '''
+
+    config = {}
 
     if path.isabs(args['directory']):
         dir_path = args['directory']
@@ -213,10 +216,10 @@ def get_stack_name(tags_file):
     return stack_name
 
 
-def run(config):
+def run(cmd_list, config):
     ''' Run the required commands '''
 
-    for subcommand in config['subcommands']:
+    for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
         if config['verbose']:
