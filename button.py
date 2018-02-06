@@ -233,4 +233,5 @@ def run(cmd_list, config):
 '''
 Run the main() function
 '''
-main()
+if __name__ == '__main__':
+    main()
