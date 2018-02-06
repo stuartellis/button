@@ -79,6 +79,10 @@ def main():
         help='allow IAM changes in the CloudFormation template',
         action='store_true')
     parser.add_argument(
+        '-j', '--json',
+        help='output the results from AWS as JSON, rather than text',
+        action='store_true')
+    parser.add_argument(
         '-p', '--parameters',
         help='the name of the CloudFormation parameters file. Default: parameters.json',
         action='store_true', default='parameters.json')
@@ -99,46 +103,49 @@ def main():
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
     args = vars(parser.parse_args())
     try:
-        config = build_config(args)
+        config = build_config(args, CF_CMD_MAPPINGS)
         run(config)
     except Exception as e:
         print('Error: {0}'.format(e))
         exit(1)
 
 
-def build_cf_cmd(subcommand, stack_name,
-                 template_file_uri, parameters_file_uri, tags_file_uri,
-                 iam):
+def build_cf_cmd(subcommand, config):
     ''' Builds an AWS CLI command for CloudFormation as a string '''
 
-    command = 'aws cloudformation {0}'.format(CF_CMD_MAPPINGS[subcommand])
+    cf_subcommand = config['mappings'][subcommand]
+    command = 'aws cloudformation {0}'.format(cf_subcommand)
     cmd_with_options = [command]
 
+    if config['format'] == 'text':
+        cmd_with_options.append('--output text')
+
     if subcommand != 'validate':
-        cmd_with_options.append('--stack-name {0}'.format(stack_name))
+        cmd_with_options.append(
+            '--stack-name {0}'.format(config['stack_name']))
 
     if subcommand != 'delete':
-        if template_file_uri is not None:
+        if config['template'] is not None:
             cmd_with_options.append(
-                '--template-body {0}'.format(template_file_uri))
+                '--template-body {0}'.format(config['template']))
 
     if subcommand == 'create' or subcommand == 'update':
-        if parameters_file_uri is not None:
+        if config['parameters'] is not None:
             cmd_with_options.append(
-                '--parameters {0}'.format(parameters_file_uri))
-        if tags_file_uri is not None:
-            cmd_with_options.append('--tags {0}'.format(tags_file_uri))
-        if iam is True:
+                '--parameters {0}'.format(config['parameters']))
+        if config['tags'] is not None:
+            cmd_with_options.append('--tags {0}'.format(config['tags']))
+        if config['iam'] is True:
             cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
 
     return ' '.join(cmd_with_options)
 
 
-def build_config(args):
+def build_config(args, mappings):
     ''' Creates a configuration from the command-line arguments '''
 
-    config = {}
-    if args['subcommand'] in CF_CMD_MAPPINGS:
+    config = { 'mappings': mappings }
+    if args['subcommand'] in config['mappings']:
         config['subcommands'] = ['validate']
         if args['subcommand'] != 'validate':
             config['subcommands'].append(args['subcommand'])
@@ -154,7 +161,7 @@ def build_config(args):
         config['directory'] = dir_path
     else:
         raise IOError(
-            "{0} does not exist, or is not a directory".format(dir_path))
+            '{0} does not exist, or is not a directory'.format(dir_path))
 
     cf_elements = ('parameters', 'template', 'tags')
     for cf_element in cf_elements:
@@ -163,7 +170,7 @@ def build_config(args):
             config[cf_element] = 'file://{0}'.format(file_path)
         else:
             raise IOError(
-                "{0} does not exist, or is not a file".format(file_path))
+                '{0} does not exist, or is not a file'.format(file_path))
 
     if args['stack']:
         config['stack_name'] = args['stack']
@@ -174,15 +181,20 @@ def build_config(args):
         else:
             raise KeyError('No tags file specified')
 
+    if args['json']:
+        config['format'] = 'json'
+    else:
+        config['format'] = 'text'
+
     if args['iam']:
         config['iam'] = True
     else:
-        config["iam"] = False
+        config['iam'] = False
 
     if args['verbose']:
         config['verbose'] = True
     else:
-        config["verbose"] = False
+        config['verbose'] = False
 
     return config
 
@@ -205,14 +217,9 @@ def run(config):
     ''' Run the required commands '''
 
     for subcommand in config['subcommands']:
-        command = build_cf_cmd(subcommand,
-                               config['stack_name'],
-                               config['template'],
-                               config['parameters'],
-                               config['tags'],
-                               config['iam'])
+        command = build_cf_cmd(subcommand, config)
 
-        if config["verbose"]:
+        if config['verbose']:
             print(command)
 
         result = subprocess.call(command, shell=True)
