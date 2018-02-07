@@ -13,16 +13,16 @@ This tool assumes that:
 * The parameters for the template are in a separate JSON file
 * All of these files are in the same directory
 
-It expects that your CloudFormation template file has the name *template.yaml*, 
-that the parameters files is called *parameters.json*, 
+It expects that your CloudFormation template file has the name *template.yaml*,
+that the parameters files is called *parameters.json*,
 and that the tags file is called *tags.json*.
 You can specify other names as options if you need to.
 
-To automatically decide the name of the CloudFormation stack, 
+To automatically decide the name of the CloudFormation stack,
 it looks for tags called 'Project' and 'Environment'.
-The AWS CloudFormation stack is assumed to have the name *project-environment*, 
+The AWS CloudFormation stack is assumed to have the name *project-environment*,
 which match the 'Project' and 'Environment' tags.
-If this is not what you want, 
+If this is not what you want,
 use the *-s* option to specify the name of the stack.
 
 The MIT License (MIT)
@@ -67,8 +67,15 @@ CF_CMD_MAPPINGS = {
 
 def main():
     ''' Main function '''
+    args = parse_args()
+    config = build_config(args)
+    cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
+    run(cmd_list, config)
 
-    parser = argparse.ArgumentParser(description='CloudFormation made easy.')
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='CloudFormation made easy.')
     parser.add_argument(
         'subcommand',
         help='subcommand to run: create, update, or delete')
@@ -101,53 +108,7 @@ def main():
     parser.add_argument(
         '-z', '--tags',
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
-    args = vars(parser.parse_args())
-    try:
-        config = build_config(args)
-        cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
-        run(cmd_list, config)
-    except Exception as e:
-        print('Error: {0}'.format(e))
-        exit(1)
-
-
-def build_cf_cmd(subcommand, config):
-    ''' Builds an AWS CLI command for CloudFormation as a string '''
-
-    cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
-
-    if config['format'] == 'text':
-        cmd_with_options.append('--output text')
-
-    if subcommand != 'validate-template':
-        cmd_with_options.append(
-            '--stack-name {0}'.format(config['stack_name']))
-
-    if subcommand != 'delete-stack':
-        if config['template'] is not None:
-            cmd_with_options.append(
-                '--template-body {0}'.format(config['template']))
-
-    if subcommand == 'create-stack' or subcommand == 'update-stack':
-        if config['parameters'] is not None:
-            cmd_with_options.append(
-                '--parameters {0}'.format(config['parameters']))
-        if config['tags'] is not None:
-            cmd_with_options.append('--tags {0}'.format(config['tags']))
-        if config['iam'] is True:
-            cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
-
-    return ' '.join(cmd_with_options)
-
-
-def build_cmd_list(subcommand, mappings):
-    if subcommand in mappings:
-        cmd_list = [ mappings['validate'] ]
-        if subcommand != 'validate':
-            cmd_list.append(mappings['subcommand'])
-        return cmd_list
-    else:
-        raise KeyError('Invalid subcommand')
+    return vars(parser.parse_args())
 
 
 def build_config(args):
@@ -214,6 +175,74 @@ def get_stack_name(tags_file):
                 project = tag["Value"]
     stack_name = '-'.join((environment.lower(), project.lower()))
     return stack_name
+
+
+def build_cf_cmd(subcommand, config):
+    ''' Builds an AWS CLI command for CloudFormation as a string '''
+
+    cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
+
+    if config['format'] == 'text':
+        cmd_with_options.append('--output text')
+
+    if subcommand != 'validate-template':
+        cmd_with_options.append(
+            '--stack-name {0}'.format(config['stack_name']))
+
+    if subcommand != 'delete-stack':
+        if config['template'] is not None:
+            cmd_with_options.append(
+                '--template-body {0}'.format(config['template']))
+
+    if subcommand == 'create-stack' or subcommand == 'update-stack':
+        if config['parameters'] is not None:
+            cmd_with_options.append(
+                '--parameters {0}'.format(config['parameters']))
+        if config['tags'] is not None:
+            cmd_with_options.append('--tags {0}'.format(config['tags']))
+        if config['iam'] is True:
+            cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
+
+    return ' '.join(cmd_with_options)
+
+
+def build_cmd_list(subcommand, mappings):
+    if subcommand in mappings:
+        cmd_list = [mappings['validate']]
+        if subcommand != 'validate':
+            cmd_list.append(mappings['subcommand'])
+        return cmd_list
+    else:
+        raise KeyError('Invalid subcommand')
+
+
+def build_cf_cmd(subcommand, config):
+    ''' Builds an AWS CLI command for CloudFormation as a string '''
+
+    cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
+
+    if config['format'] == 'text':
+        cmd_with_options.append('--output text')
+
+    if subcommand != 'validate-template':
+        cmd_with_options.append(
+            '--stack-name {0}'.format(config['stack_name']))
+
+    if subcommand != 'delete-stack':
+        if config['template'] is not None:
+            cmd_with_options.append(
+                '--template-body {0}'.format(config['template']))
+
+    if subcommand == 'create-stack' or subcommand == 'update-stack':
+        if config['parameters'] is not None:
+            cmd_with_options.append(
+                '--parameters {0}'.format(config['parameters']))
+        if config['tags'] is not None:
+            cmd_with_options.append('--tags {0}'.format(config['tags']))
+        if config['iam'] is True:
+            cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
+
+    return ' '.join(cmd_with_options)
 
 
 def run(cmd_list, config):
