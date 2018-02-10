@@ -210,7 +210,7 @@ def build_cmd_list(subcommand, mappings):
     if subcommand in mappings:
         cmd_list = [mappings['validate']]
         if subcommand != 'validate':
-            cmd_list.append(mappings['subcommand'])
+            cmd_list.append(mappings[subcommand])
         return cmd_list
     else:
         raise KeyError('Invalid subcommand')
