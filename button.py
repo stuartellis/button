@@ -67,18 +67,18 @@ CF_CMD_MAPPINGS = {
 
 def main():
     ''' Main function '''
-    args = parse_args()
+    args = parse_args(set(CF_CMD_MAPPINGS))
     config = build_config(args)
     cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
     run(cmd_list, config)
 
 
-def parse_args():
+def parse_args(subcommands):
     parser = argparse.ArgumentParser(
         description='CloudFormation made easy.')
     parser.add_argument(
-        'subcommand',
-        help='subcommand to run: create, update, or delete')
+        'subcommand', choices=subcommands, 
+        help='subcommand to run: create, update, delete, or validate')
     parser.add_argument(
         'directory', help='location of the directory for CloudFormation files')
     parser.add_argument(
