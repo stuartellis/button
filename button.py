@@ -67,13 +67,14 @@ CF_CMD_MAPPINGS = {
 
 def main():
     ''' Main function '''
-    args = parse_args(set(CF_CMD_MAPPINGS))
+    parser = build_parser(set(CF_CMD_MAPPINGS))
+    args = vars(parser.parse_args())
     config = build_config(args)
     cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
     run(cmd_list, config)
 
 
-def parse_args(subcommands):
+def build_parser(subcommands):
     parser = argparse.ArgumentParser(
         description='CloudFormation made easy.')
     parser.add_argument(
@@ -92,15 +93,15 @@ def parse_args(subcommands):
     parser.add_argument(
         '-p', '--parameters',
         help='the name of the CloudFormation parameters file. Default: parameters.json',
-        action='store_true', default='parameters.json')
+        action='store', default='parameters.json')
     parser.add_argument(
         '-s', '--stack',
         help='the name of the CloudFormation stack. Default: reads Project and Environment tags',
-        action='store_true')
+        action='store')
     parser.add_argument(
         '-t', '--template',
         help='the name of the CloudFormation template file. Default: template.yaml',
-        action='store_true', default='template.yaml')
+        action='store', default='template.yaml')
     parser.add_argument(
         '-v', '--verbose',
         help='output the generated commands',
@@ -108,7 +109,7 @@ def parse_args(subcommands):
     parser.add_argument(
         '-z', '--tags',
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
-    return vars(parser.parse_args())
+    return parser
 
 
 def build_config(args):
@@ -247,7 +248,7 @@ def build_cf_cmd(subcommand, config):
 
 def run(cmd_list, config):
     ''' Run the required commands '''
-
+    print(config)
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
