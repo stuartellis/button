@@ -78,7 +78,7 @@ def build_parser(subcommands):
     parser = argparse.ArgumentParser(
         description='CloudFormation made easy.')
     parser.add_argument(
-        'subcommand', choices=subcommands, 
+        'subcommand', choices=subcommands,
         help='subcommand to run: create, update, delete, or validate')
     parser.add_argument(
         'directory', help='location of the directory for CloudFormation files')
@@ -248,7 +248,7 @@ def build_cf_cmd(subcommand, config):
 
 def run(cmd_list, config):
     ''' Run the required commands '''
-    print(config)
+
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
