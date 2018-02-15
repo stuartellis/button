@@ -56,6 +56,8 @@ import sys
 from os import path
 
 
+VERSION = '0.5.0'
+
 ''' Maps Button subcommands to AWS command-line CloudFormation subcommands '''
 CF_CMD_MAPPINGS = {
     'create': 'create-stack',
@@ -67,14 +69,14 @@ CF_CMD_MAPPINGS = {
 
 def main():
     ''' Main function '''
-    parser = build_parser(set(CF_CMD_MAPPINGS))
+    parser = build_parser(set(CF_CMD_MAPPINGS), VERSION)
     args = vars(parser.parse_args())
     config = build_config(args)
     cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
     run(cmd_list, config)
 
 
-def build_parser(subcommands):
+def build_parser(subcommands, version):
     parser = argparse.ArgumentParser(
         description='CloudFormation made easy.')
     parser.add_argument(
@@ -82,6 +84,10 @@ def build_parser(subcommands):
         help='subcommand to run: create, update, delete, or validate')
     parser.add_argument(
         'directory', help='location of the directory for CloudFormation files')
+    parser.add_argument(
+        '--debug',
+        help='output the generated commands',
+        action='store_true')
     parser.add_argument(
         '-i', '--iam',
         help='allow IAM changes in the CloudFormation template',
@@ -103,9 +109,9 @@ def build_parser(subcommands):
         help='the name of the CloudFormation template file. Default: template.yaml',
         action='store', default='template.yaml')
     parser.add_argument(
-        '-v', '--verbose',
-        help='output the generated commands',
-        action='store_true')
+        '-v', '--version',
+        help='show the version of this script and exit',
+        action='version', version="%(prog)s " + version)
     parser.add_argument(
         '-z', '--tags',
         help='the name of the CloudFormation tags file. Default: tags.json', action='store_true', default='tags.json')
@@ -156,10 +162,10 @@ def build_config(args):
     else:
         config['iam'] = False
 
-    if args['verbose']:
-        config['verbose'] = True
+    if args['debug']:
+        config['debug'] = True
     else:
-        config['verbose'] = False
+        config['debug'] = False
 
     return config
 
@@ -256,7 +262,7 @@ def run(cmd_list, config):
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
-        if config['verbose']:
+        if config['debug']:
             print(command)
 
         result = subprocess.call(command, shell=True)
