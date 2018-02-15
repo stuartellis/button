@@ -67,13 +67,14 @@ CF_CMD_MAPPINGS = {
 }
 
 
-def main():
+def main(mappings, version):
     ''' Main function '''
-    parser = build_parser(set(CF_CMD_MAPPINGS), VERSION)
+
+    parser = build_parser(set(mappings), version)
     args = vars(parser.parse_args())
     config = build_config(args)
-    cmd_list = build_cmd_list(args['subcommand'], CF_CMD_MAPPINGS)
-    run(cmd_list, config)
+    cmd_list = build_cmd_list(args['subcommand'], mappings)
+    run_cmds(cmd_list, config)
 
 
 def build_parser(subcommands, version):
@@ -81,7 +82,7 @@ def build_parser(subcommands, version):
         description='CloudFormation made easy.')
     parser.add_argument(
         'subcommand', choices=subcommands,
-        help='subcommand to run: create, update, delete, or validate')
+        help='subcommand to run: create, update, delete or validate')
     parser.add_argument(
         'directory', help='location of the directory for CloudFormation files')
     parser.add_argument(
@@ -256,7 +257,7 @@ def build_cf_cmd(subcommand, config):
     return ' '.join(cmd_with_options)
 
 
-def run(cmd_list, config):
+def run_cmds(cmd_list, config):
     ''' Run the required commands '''
 
     for subcommand in cmd_list:
@@ -274,4 +275,4 @@ def run(cmd_list, config):
 Run the main() function
 '''
 if __name__ == '__main__':
-    main()
+    main(CF_CMD_MAPPINGS, VERSION)
