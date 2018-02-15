@@ -175,7 +175,7 @@ def get_stack_name(tags_file):
             if tag["Key"] == 'project' or tag["Key"] == 'Project':
                 project = tag["Value"]
             if tag["Key"] == 'tier' or tag["Key"] == 'Tier':
-                project = tag["Value"]
+                tier = tag["Value"]
     stack_name = '-'.join((environment.title(), project.title(), tier.title()))
     return stack_name
 
