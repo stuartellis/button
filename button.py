@@ -96,7 +96,7 @@ def build_parser(subcommands):
         action='store', default='parameters.json')
     parser.add_argument(
         '-s', '--stack',
-        help='the name of the CloudFormation stack. Default: reads Project and Environment tags',
+        help='the name of the CloudFormation stack. Default: reads Project, Environment and Tier tags',
         action='store')
     parser.add_argument(
         '-t', '--template',
