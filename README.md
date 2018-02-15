@@ -39,4 +39,4 @@ This tool is deliberately very simple and very opinionated. It assumes that:
 It expects that your CloudFormation template file has the name *template.yaml*, 
 that the parameters files is called *parameters.json*, and that the tags file is called *tags.json*. You can specify other names as options if you need to.
 
-To automatically decide the name of the CloudFormation stack, it looks for tags called *Project* and *Environment*. The AWS CloudFormation stack is assumed to have the name *project-environment*, which match the *Project* and *Environment* tags. If this is not what you want, use the *-s* option to specify the name of the stack.
+To automatically decide the name of the CloudFormation stack, it looks for tags called *Project*, *Environment* and *Tier*. The AWS CloudFormation stack is assumed to have the name *project-environment-tier*, which match these tags. If this is not what you want, use the *-s* option to specify the name of the stack.

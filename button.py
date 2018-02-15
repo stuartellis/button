@@ -19,9 +19,9 @@ and that the tags file is called *tags.json*.
 You can specify other names as options if you need to.
 
 To automatically decide the name of the CloudFormation stack,
-it looks for tags called 'Project' and 'Environment'.
-The AWS CloudFormation stack is assumed to have the name *project-environment*,
-which match the 'Project' and 'Environment' tags.
+it looks for tags called 'Project', 'Environment' and 'Tier'.
+The AWS CloudFormation stack is assumed to have the name *project-environment-tier*,
+to match these tags.
 If this is not what you want,
 use the *-s* option to specify the name of the stack.
 
@@ -174,7 +174,9 @@ def get_stack_name(tags_file):
                 environment = tag["Value"]
             if tag["Key"] == 'project' or tag["Key"] == 'Project':
                 project = tag["Value"]
-    stack_name = '-'.join((environment.lower(), project.lower()))
+            if tag["Key"] == 'tier' or tag["Key"] == 'Tier':
+                project = tag["Value"]
+    stack_name = '-'.join((environment.title(), project.title(), tier.title()))
     return stack_name
 
 
@@ -208,6 +210,8 @@ def build_cf_cmd(subcommand, config):
 
 
 def build_cmd_list(subcommand, mappings):
+    ''' Builds a list of commands '''
+
     if subcommand in mappings:
         cmd_list = [mappings['validate']]
         if subcommand != 'validate':
