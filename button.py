@@ -66,7 +66,7 @@ CF_CMD_MAPPINGS = {
     'validate': 'validate-template'
 }
 
-STACK_NAME_TAGS = ('project', 'environment', 'tier')
+STACK_NAME_TAGS = ('Project', 'Environment', 'Tier')
 
 
 def main(mappings, stack_name_tags, version):
@@ -151,7 +151,7 @@ def build_config(args, stack_name_tags):
     else:
         if config['tags']:
             config['stack_name'] = get_stack_name(
-                config['tags'].split(':/')[1], stack_name_tags)
+                config['tags'].split('://')[1], stack_name_tags)
         else:
             raise KeyError('No tags file specified')
 
@@ -184,7 +184,12 @@ def get_stack_name(tags_file, stack_name_tags):
                 for varient in (n, n.upper(), n.lower, n.title()):
                     if tag['Key'] == varient:
                         selections[n] = tag['Value']
-    return '-'.join((selections[t] for t in stack_name_tags if selections[t]))
+    for t in stack_name_tags:
+        if t not in selections:
+            raise KeyError(
+                'There is no "{0}" tag in {1}'.format(t, tags_file))
+
+    return '-'.join((selections[t] for t in stack_name_tags))
 
 
 def build_cf_cmd(subcommand, config):
