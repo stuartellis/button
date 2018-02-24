@@ -66,13 +66,15 @@ CF_CMD_MAPPINGS = {
     'validate': 'validate-template'
 }
 
+STACK_NAME_TAGS = ('project', 'environment', 'tier')
 
-def main(mappings, version):
+
+def main(mappings, stack_name_tags, version):
     ''' Main function '''
 
     parser = build_parser(set(mappings), version)
     args = vars(parser.parse_args())
-    config = build_config(args)
+    config = build_config(args, stack_name_tags)
     cmd_list = build_cmd_list(args['subcommand'], mappings)
     run_cmds(cmd_list, config)
 
@@ -119,7 +121,7 @@ def build_parser(subcommands, version):
     return parser
 
 
-def build_config(args):
+def build_config(args, stack_name_tags):
     ''' Creates a configuration from the command-line arguments '''
 
     config = {}
@@ -149,7 +151,7 @@ def build_config(args):
     else:
         if config['tags']:
             config['stack_name'] = get_stack_name(
-                config['tags'].split(':/')[1])
+                config['tags'].split(':/')[1], stack_name_tags)
         else:
             raise KeyError('No tags file specified')
 
@@ -171,20 +173,18 @@ def build_config(args):
     return config
 
 
-def get_stack_name(tags_file):
+def get_stack_name(tags_file, stack_name_tags):
     ''' Determines the CloudFormation stack name '''
 
     with open(tags_file, "r") as f:
         tags = json.load(f)
+        selections = {}
         for tag in tags:
-            if tag['Key'] == 'environment' or tag['Key'] == 'Environment':
-                environment = tag["Value"]
-            if tag["Key"] == 'project' or tag["Key"] == 'Project':
-                project = tag["Value"]
-            if tag["Key"] == 'tier' or tag["Key"] == 'Tier':
-                tier = tag["Value"]
-    stack_name = '-'.join((environment.title(), project.title(), tier.title()))
-    return stack_name
+            for n in stack_name_tags:
+                for varient in (n, n.upper(), n.lower, n.title()):
+                    if tag['Key'] == varient:
+                        selections[n] = tag['Value']
+    return '-'.join((selections[t] for t in stack_name_tags if selections[t]))
 
 
 def build_cf_cmd(subcommand, config):
@@ -275,4 +275,4 @@ def run_cmds(cmd_list, config):
 Run the main() function
 '''
 if __name__ == '__main__':
-    main(CF_CMD_MAPPINGS, VERSION)
+    main(CF_CMD_MAPPINGS, STACK_NAME_TAGS, VERSION)
