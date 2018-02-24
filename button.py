@@ -53,7 +53,7 @@ import argparse
 import json
 import subprocess
 import sys
-from os import path
+from os import linesep, path
 
 
 VERSION = '0.5.0'
@@ -143,8 +143,11 @@ def build_config(args, stack_name_tags):
         if path.exists(file_path) and path.isfile(file_path):
             config[cf_element] = 'file://{0}'.format(file_path)
         else:
-            raise IOError(
-                '{0} does not exist, or is not a file'.format(file_path))
+            if cf_element == 'parameters':
+                config[cf_element] = None
+            else:
+                raise IOError(
+                    '{0} does not exist, or is not a file'.format(file_path))
 
     if args['stack']:
         config['stack_name'] = args['stack']
@@ -265,11 +268,15 @@ def build_cf_cmd(subcommand, config):
 def run_cmds(cmd_list, config):
     ''' Run the required commands '''
 
+    if config['debug']:
+        print('Configuration:{0}'.format(linesep))
+        print(json.dumps(config, indent = 4))
+
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
         if config['debug']:
-            print(command)
+            print('{0}Command:{0}{1}{0}'.format(linesep, command))
 
         result = subprocess.call(command, shell=True)
         if result != 0:
