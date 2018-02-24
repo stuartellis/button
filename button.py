@@ -56,7 +56,7 @@ import sys
 from os import linesep, path
 
 
-VERSION = '0.5.0'
+VERSION = '0.6.0'
 
 ''' Maps Button subcommands to AWS command-line CloudFormation subcommands '''
 CF_CMD_MAPPINGS = {
