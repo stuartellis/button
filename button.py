@@ -76,6 +76,10 @@ def main(mappings, stack_name_tags, version):
     args = vars(parser.parse_args())
     config = build_config(args, stack_name_tags)
     cmd_list = build_cmd_list(args['subcommand'], mappings)
+
+    if config['debug']:
+        print_debug_info(config)
+
     run_cmds(cmd_list, config)
 
 
@@ -265,12 +269,17 @@ def build_cf_cmd(subcommand, config):
     return ' '.join(cmd_with_options)
 
 
+def print_debug_info(config):
+    print('Source Files:{0}'.format(linesep))
+    print('Parameters file: {0}{1}'.format(config['parameters'], linesep))
+    print('Tags file: {0}{1}'.format(config['tags'], linesep))
+    print('Template file: {0}{1}'.format(config['template'], linesep))
+    print('Configuration:{0}'.format(linesep))
+    print(json.dumps(config, indent=4))
+
+
 def run_cmds(cmd_list, config):
     ''' Run the required commands '''
-
-    if config['debug']:
-        print('Configuration:{0}'.format(linesep))
-        print(json.dumps(config, indent = 4))
 
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
