@@ -4,12 +4,8 @@
     "Value": "Staging"
   },
   {
-    "Key": "ManagedBy",
-    "Value": "AmazonNative"
-  },
-  {
     "Key": "Project",
-    "Value": "test1"
+    "Value": "Test1"
   },
   {
     "Key": "Tier",

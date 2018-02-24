@@ -8,15 +8,12 @@ Get the latest version from: https://www.github.com/stuartellis/button
 
 This tool assumes that:
 
-* You already have a CloudFormation template file
-* The tags for the template are in a separate JSON file
-* The parameters for the template are in a separate JSON file
+* You have a CloudFormation template file in YAML format. By default, it looks for a file called *template.yaml*.
+* The tags for the template are in a separate JSON file, called  *tags.json*
+* If your template uses parameters, these are in a JSON file. By default this file will be called *parameters.json*.
 * All of these files are in the same directory
 
-It expects that your CloudFormation template file has the name *template.yaml*,
-that the parameters files is called *parameters.json*,
-and that the tags file is called *tags.json*.
-You can specify other names as options if you need to.
+You can specify different names for these files as options if you need to.
 
 To automatically decide the name of the CloudFormation stack,
 it looks for tags called 'Project', 'Environment' and 'Tier'.
@@ -56,7 +53,7 @@ import sys
 from os import linesep, path
 
 
-VERSION = '0.6.0'
+VERSION = '0.6.1'
 
 ''' Maps Button subcommands to AWS command-line CloudFormation subcommands '''
 CF_CMD_MAPPINGS = {

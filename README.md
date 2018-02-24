@@ -31,12 +31,13 @@ Button requires your computer to have Python 2 or above, and [the official AWS c
 
 This tool is deliberately very simple and very opinionated. It assumes that:
 
-* You already have a CloudFormation template file
-* The tags for the template are in a separate JSON file
-* The parameters for the template are in a separate JSON file
+* You have a CloudFormation template file in YAML format. By default, it looks for a file called *template.yaml*.
+* The tags for the template are in a separate JSON file, called  *tags.json*
+* If your template uses parameters, these are in a JSON file. By default this file will be called *parameters.json*.
 * All of these files are in the same directory
 
-It expects that your CloudFormation template file has the name *template.yaml*, 
-that the parameters files is called *parameters.json*, and that the tags file is called *tags.json*. You can specify other names as options if you need to.
+You can specify different names for these files as options if you need to.
 
-To automatically decide the name of the CloudFormation stack, it looks for tags called *Project*, *Environment* and *Tier*. The AWS CloudFormation stack is assumed to have the name *project-environment-tier*, which match these tags. If this is not what you want, use the *-s* option to specify the name of the stack.
+To automatically decide the name of the CloudFormation stack, Button  looks for tags called *Project*, *Environment* and *Tier*. The AWS CloudFormation stack is assumed to have the name *project-environment-tier*, which match these tags. If this is not what you want, use the *-s* option to specify the name of the stack.
+
+The *examples* directory contains a working set of files to show how this works.
