@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''
+"""
 
 Button provides a convenient way to run an AWS CloudFormation template.
 
@@ -44,7 +44,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-'''
+"""
 
 import argparse
 import json
@@ -53,23 +53,22 @@ import sys
 from os import linesep, path
 
 
-VERSION = '0.6.1'
+VERSION = '0.6.2'
 
-''' Maps Button subcommands to AWS command-line CloudFormation subcommands '''
+"""Map Button subcommands to AWS command-line CloudFormation subcommands"""
 CF_CMD_MAPPINGS = {
     'create': 'create-stack',
     'delete': 'delete-stack',
     'update': 'update-stack',
-    'validate': 'validate-template'
+    'validate': 'validate-template',
 }
 
-STACK_NAME_TAGS = ('Project', 'Environment', 'Tier')
+STACK_NAME_TAGS = ('Project', 'Environment', 'Tier',)
 
 
 def main(mappings, stack_name_tags, version):
-    ''' Main function '''
-
-    parser = build_parser(set(mappings), version)
+    """Main function for running Button from the command-line"""
+    parser = build_arg_parser(set(mappings), version)
     args = vars(parser.parse_args())
     config = build_config(args, stack_name_tags)
     cmd_list = build_cmd_list(args['subcommand'], mappings)
@@ -80,7 +79,8 @@ def main(mappings, stack_name_tags, version):
     run_cmds(cmd_list, config)
 
 
-def build_parser(subcommands, version):
+def build_arg_parser(subcommands, version):
+    """Creates the parser for the command-line arguments"""
     parser = argparse.ArgumentParser(
         description='CloudFormation made easy.')
     parser.add_argument(
@@ -123,8 +123,7 @@ def build_parser(subcommands, version):
 
 
 def build_config(args, stack_name_tags):
-    ''' Creates a configuration from the command-line arguments '''
-
+    """Creates a configuration from the command-line arguments"""
     config = {}
 
     if path.isabs(args['directory']):
@@ -178,8 +177,7 @@ def build_config(args, stack_name_tags):
 
 
 def get_stack_name(tags_file, stack_name_tags):
-    ''' Determines the CloudFormation stack name '''
-
+    """Determines the CloudFormation stack name"""
     with open(tags_file, "r") as f:
         tags = json.load(f)
         selections = {}
@@ -197,8 +195,7 @@ def get_stack_name(tags_file, stack_name_tags):
 
 
 def build_cf_cmd(subcommand, config):
-    ''' Builds an AWS CLI command for CloudFormation as a string '''
-
+    """Builds an AWS CLI command for CloudFormation"""
     cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
 
     if config['format'] == 'text':
@@ -226,8 +223,7 @@ def build_cf_cmd(subcommand, config):
 
 
 def build_cmd_list(subcommand, mappings):
-    ''' Builds a list of commands '''
-
+    """Builds a list of commands"""
     if subcommand in mappings:
         cmd_list = [mappings['validate']]
         if subcommand != 'validate':
@@ -238,8 +234,7 @@ def build_cmd_list(subcommand, mappings):
 
 
 def build_cf_cmd(subcommand, config):
-    ''' Builds an AWS CLI command for CloudFormation as a string '''
-
+    """Builds an AWS CLI command for CloudFormation"""
     cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
 
     if config['format'] == 'text':
@@ -267,6 +262,7 @@ def build_cf_cmd(subcommand, config):
 
 
 def print_debug_info(config):
+    """Prints debugging information to the console"""
     print('Source Files:{0}'.format(linesep))
     print('Parameters file: {0}{1}'.format(config['parameters'], linesep))
     print('Tags file: {0}{1}'.format(config['tags'], linesep))
@@ -276,8 +272,7 @@ def print_debug_info(config):
 
 
 def run_cmds(cmd_list, config):
-    ''' Run the required commands '''
-
+    """Runs the required AWS commands"""
     for subcommand in cmd_list:
         command = build_cf_cmd(subcommand, config)
 
@@ -289,8 +284,6 @@ def run_cmds(cmd_list, config):
             raise Exception(result)
 
 
-'''
-Run the main() function
-'''
+"""Runs the main() function when this file is executed"""
 if __name__ == '__main__':
     main(CF_CMD_MAPPINGS, STACK_NAME_TAGS, VERSION)
