@@ -1,5 +1,7 @@
 # Button
 
+[![Stability: Active](https://masterminds.github.io/stability/active.svg)](https://masterminds.github.io/stability/active.html)
+
 Just drop *button.py* into any project that has CloudFormation templates. You can then manage your application environments without either a stand-alone DevOps tool, or the awkwardness of interacting with the AWS command-line utility.
 
 ## Usage
