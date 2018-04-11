@@ -53,7 +53,7 @@ import sys
 from os import linesep, path
 
 
-VERSION = '0.6.2'
+VERSION = '0.6.3'
 
 """Map Button subcommands to AWS command-line CloudFormation subcommands"""
 CF_CMD_MAPPINGS = {
@@ -231,34 +231,6 @@ def build_cmd_list(subcommand, mappings):
         return cmd_list
     else:
         raise KeyError('Invalid subcommand')
-
-
-def build_cf_cmd(subcommand, config):
-    """Builds an AWS CLI command for CloudFormation"""
-    cmd_with_options = ['aws cloudformation {0}'.format(subcommand)]
-
-    if config['format'] == 'text':
-        cmd_with_options.append('--output text')
-
-    if subcommand != 'validate-template':
-        cmd_with_options.append(
-            '--stack-name {0}'.format(config['stack_name']))
-
-    if subcommand != 'delete-stack':
-        if config['template'] is not None:
-            cmd_with_options.append(
-                '--template-body {0}'.format(config['template']))
-
-    if subcommand == 'create-stack' or subcommand == 'update-stack':
-        if config['parameters'] is not None:
-            cmd_with_options.append(
-                '--parameters {0}'.format(config['parameters']))
-        if config['tags'] is not None:
-            cmd_with_options.append('--tags {0}'.format(config['tags']))
-        if config['iam'] is True:
-            cmd_with_options.append('--capabilities CAPABILITY_NAMED_IAM')
-
-    return ' '.join(cmd_with_options)
 
 
 def print_debug_info(config):
