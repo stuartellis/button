@@ -4,7 +4,7 @@
 
 Button provides a convenient way to run an AWS CloudFormation template.
 
-Get the latest version from: https://www.github.com/stuartellis/button
+Get the latest version from: https://www.gitlab.com/stuart-ellis/button
 
 This tool assumes that:
 
